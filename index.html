@@ -102,7 +102,7 @@ details[open] summary::after { content: "–"; }
     <details id="specsBox">
       <summary>Ficha técnica aproximada</summary>
       <dl class="specs" id="specs"></dl>
-      <p class="note">Las letras son vacío real: cada tubo se corta en tramos que cuelgan de un cable de acero inoxidable de 3 mm, casi invisible a distancia. Cada barra del logotipo se forma con 3 tubos <i>naranja</i> repartidos en 3 planos, un poco más gruesa que en el vector para ganar legibilidad. Todo se alinea desde el disco de bronce, a 35 m; desde atrás la imagen se ve en espejo.</p>
+      <p class="note">Las letras son vacío real: cada tubo se corta en tramos que cuelgan de un cable de acero inoxidable de 3 mm, casi invisible a distancia. Cada barra del logotipo se forma con 5 varillas <i>naranja</i> de 39 mm repartidas en 5 planos; al ser finas reproducen también las líneas delgadas que cierran arcos y ventanas. Todo se alinea desde el disco de bronce, a 35 m; desde atrás la imagen se ve en espejo.</p>
     </details>
   </section>
 </div>
@@ -120,19 +120,18 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { Sky } from 'three/addons/objects/Sky.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
-/* ---------- Datos del vector (arte-cinetico.svg): tramos naranja por columna, unidades SVG, y hacia abajo ---------- */
-const COLS = [[[167.8,832.8]],[[167.8,705.5],[730.2,872.8]],[[167.8,681.8],[714.2,891.0]],[[167.8,669.8],[704.5,901.8]],[[167.8,663.0],[699.2,907.8]],[[167.8,659.2],[696.8,730.8],[834.0,911.2]],[[167.8,657.8],[696.8,712.8],[834.0,912.8]],[[167.8,658.0],[699.2,713.5],[834.0,912.8]],[[167.8,659.5],[712.5,735.8],[834.0,911.2]],[[167.8,663.5],[757.0,770.8],[797.5,907.5]],[[167.8,670.5],[757.0,770.8],[797.5,901.0]],[[167.8,683.0],[757.0,770.8],[797.5,890.0]],[[167.8,708.0],[757.0,770.8],[797.5,871.0]],[[167.8,842.0]],[[167.8,704.0],[809.0,873.8]],[[167.8,681.0],[826.0,891.8]],[[167.8,669.2],[833.0,902.0]],[[167.8,662.8],[754.2,908.0]],[[167.8,659.2],[710.0,730.2],[834.0,911.5]],[[167.8,657.8],[698.8,712.8],[834.0,912.8]],[[167.8,658.0],[694.2,714.0],[834.0,912.8]],[[167.8,659.8],[691.8,737.8],[834.0,911.0]],[[167.8,663.5],[692.5,907.2]],[[167.8,670.8],[697.5,900.5]],[[167.8,683.8],[708.0,889.2]],[[167.8,709.8],[726.2,869.8]],[[167.8,909.5]],[[167.8,661.2],[730.0,909.2]],[[167.8,661.2],[713.8,909.5]],[[167.8,661.2],[704.2,909.5]],[[167.8,661.2],[699.0,907.5]],[[167.8,661.2],[697.0,716.2],[771.8,785.2],[824.2,851.2]],[[167.8,661.2],[698.0,711.8],[771.8,785.2],[836.5,854.8]],[[167.8,661.2],[706.2,723.8],[771.8,785.2],[839.5,895.2]],[[167.8,661.2],[740.2,782.5],[838.0,909.5]],[[167.8,663.5],[833.0,909.5]],[[167.8,672.2],[826.0,909.5]],[[167.8,692.2],[806.8,909.5]],[[167.8,909.5]],[[167.8,708.2],[805.8,871.0]],[[167.8,682.8],[824.8,890.0]],[[167.8,670.2],[832.5,901.0]],[[167.8,663.2],[764.8,907.5]],[[167.8,659.5],[712.2,735.0],[834.0,911.2]],[[167.8,658.0],[699.2,713.5],[834.0,912.8]],[[167.8,657.8],[694.8,713.0],[834.0,912.8]],[[167.8,659.2],[691.8,732.0],[834.0,911.2]],[[167.8,663.0],[692.2,907.8]],[[167.8,669.8],[696.8,901.5]],[[167.8,682.0],[706.5,891.0]],[[167.8,705.5],[723.8,872.8]],[[167.8,833.2]]];
+/* ---------- Datos del vector (arte-cinetico.svg): tramos naranja de cada varilla fina, unidades SVG, y hacia abajo ---------- */
+const COLS = '168-806|168-822|168-834|168-842|168-848|168-717,736-866|168-711,733-869|168-706,730-873|168-701,728-876|168-697,725-879|168-686,718-887|168-684,716-889|168-682,714-891|168-680,712-893|168-678,711-894|168-672,707-899|168-671,706-900|168-670,704-902|168-668,704-903|168-668,703-904|168-664,700-906|168-664,700-907|168-663,699-908|168-662,699-908|168-662,698-909|168-660,697-910|168-660,697-737,834-911|168-659,697-731,834-911|168-659,696-726,834-912|168-659,696-723,834-912|168-658,696-715,834-912|168-658,696-714,834-913|168-658,697-713,834-913|168-658,697-712,834-913|168-658,697-712,834-913|168-658,698-712,834-913|168-658,698-713,834-913|168-658,699-714,834-913|168-658,700-715,834-912|168-658,702-717,834-912|168-659,707-726,834-912|168-659,710-730,834-912|168-660,712-736,834-911|168-660,716-750,834-911|168-660,720-770,798-910|168-662,757-771,798-909|168-663,757-771,798-908|168-664,757-771,798-908|168-664,757-771,798-907|168-665,757-771,798-906|168-668,757-771,798-903|168-669,757-771,798-902|168-670,757-771,798-901|168-672,757-771,798-900|168-673,757-771,798-898|168-679,757-771,798-894|168-681,757-771,798-892|168-683,757-771,798-890|168-685,757-771,798-888|168-688,757-771,798-886|168-699,757-771,798-877|168-703,757-771,798-874|168-708,757-771,798-871|168-714,757-771,798-867|168-721,757-771,798-863|168-844|168-837|168-836|168-844|168-752,767-851|168-715,800-867|168-709,805-871|168-704,809-874|168-700,812-877|168-696,815-880|168-686,823-888|168-683,824-890|168-681,826-892|168-679,828-893|168-677,828-895|168-672,832-900|168-670,832-901|168-669,833-902|168-668,834-903|168-667,834-904|168-664,835-907|168-664,835-908|168-663,754-908|168-662,739-909|168-662,732-909|168-660,716-911|168-660,712-736,834-911|168-659,710-730,834-912|168-659,707-726,834-912|168-659,706-722,834-912|168-658,700-715,834-912|168-658,700-714,834-913|168-658,699-713,834-913|168-658,698-712,834-913|168-658,698-712,834-913|168-658,696-712,834-913|168-658,695-713,834-913|168-658,694-714,834-913|168-658,694-715,834-912|168-658,693-717,834-912|168-659,692-726,834-912|168-659,692-731,834-912|168-660,692-738,834-911|168-660,692-911|168-660,692-910|168-662,692-908|168-663,692-908|168-664,692-907|168-664,693-906|168-665,694-906|168-668,696-903|168-670,697-902|168-671,698-900|168-672,699-900|168-674,700-898|168-680,704-893|168-682,706-891|168-684,708-890|168-686,710-888|168-689,712-885|168-701,720-876|168-705,723-873|168-710,726-870|168-716,730-866|168-723,734-862|168-907|168-909|168-910|168-910|168-910|168-661,736-909|168-661,733-909|168-661,730-909|168-661,727-909|168-661,725-909|168-661,717-910|168-661,716-910|168-661,714-910|168-661,712-910|168-661,710-910|168-661,706-910|168-661,705-910|168-661,704-910|168-661,703-910|168-661,702-910|168-661,700-910|168-661,700-909|168-661,699-908|168-661,698-743,772-851|168-661,698-734,772-851|168-661,697-720,772-785,818-851|168-661,697-718,772-785,821-851|168-661,697-716,772-785,824-851|168-661,697-715,772-785,827-851|168-661,697-714,772-785,829-851|168-661,698-712,772-785,834-851|168-661,698-712,772-785,836-851|168-661,698-712,772-785,836-855|168-661,698-712,772-785,837-860|168-661,699-713,772-785,838-866|168-661,703-718,772-785,839-885|168-661,704-721,772-785,840-890|168-661,706-724,772-785,840-895|168-661,708-727,772-785,840-901|168-661,711-732,772-785,840-906|168-661,724-785,839-910|168-661,730-785,838-910|168-661,740-782,838-910|168-661,838-910|168-661,837-910|168-662,835-910|168-663,834-910|168-664,833-910|168-664,832-910|168-665,831-910|168-669,828-910|168-671,827-910|168-672,826-910|168-674,825-910|168-676,823-910|168-685,814-910|168-688,810-910|168-692,807-910|168-697,802-910|168-702,797-910|168-732,766-910|168-910|168-910|168-909|168-908|168-721,796-864|168-714,801-868|168-708,806-871|168-703,810-874|168-699,813-878|168-688,821-886|168-685,823-888|168-683,825-890|168-680,826-892|168-678,828-894|168-673,831-898|168-672,832-900|168-670,832-901|168-669,833-902|168-668,834-903|168-665,834-906|168-664,835-907|168-663,765-908|168-663,744-908|168-662,736-909|168-660,719-910|168-660,715-746,834-911|168-660,712-735,834-911|168-659,709-729,834-912|168-659,707-725,834-912|168-658,702-716,834-912|168-658,700-715,834-912|168-658,699-714,834-913|168-658,699-713,834-913|168-658,698-712,834-913|168-658,696-712,834-913|168-658,696-712,834-913|168-658,695-713,834-913|168-658,694-714,834-913|168-658,694-716,834-912|168-659,692-724,834-912|168-659,692-727,834-912|168-659,692-732,834-911|168-660,692-739,834-911|168-660,692-910|168-662,692-909|168-662,692-908|168-663,692-908|168-664,693-907|168-664,693-906|168-668,695-904|168-668,696-902|168-670,697-902|168-671,698-900|168-672,699-899|168-678,703-894|168-680,705-893|168-682,706-891|168-684,708-889|168-687,710-887|168-698,718-879|168-701,721-876|168-706,724-873|168-711,727-869|168-717,730-866|168-848|168-842|168-833|168-822|168-805'.split('|').map(c => c ? c.split(',').map(r => r.split('-').map(Number)) : []);  // una entrada por varilla: 52 barras × 5
 
 /* ---------- Escala y concepto ---------- */
 const S = 0.01207;            // metros por unidad SVG → campo de 15 × 9 m
 const U0 = 167.5, HTOP = 14.8, UCX = 957.6, PITCH = 23.93, UX0 = 347.47;
-const BAR = 0.78 * PITCH;                    // barras algo más gruesas que en el SVG (67 %) para ganar legibilidad
-const SUBOFF = [-BAR / 3, 0, BAR / 3];       // 3 tubos por barra
-const NROW = 3, ROWGAP = 0.6, ZFRONT = 0.6;  // 3 planos de profundidad centrados en z = 0
+const BARW = 16.16, NSUB = 5;                // ancho real de cada barra del SVG, dividido en 5 varillas finas
+const NROW = 5, ROWGAP = 0.35, ZFRONT = 0.7; // 5 planos de profundidad centrados en z = 0
 const READ_DIST = 35;
 const EYE = new THREE.Vector3(0, 1.7, READ_DIST);  // punto de lectura
 const FRAME_Y = 16.15;
-const R0 = (BAR / 6) * S;     // radio ≈ 37 mm (Ø ≈ 75 mm)
+const R0 = (BARW / NSUB / 2) * S;  // radio ≈ 19,5 mm (Ø ≈ 39 mm)
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -224,18 +223,21 @@ for (let i = 0; i <= 6; i++) box(0.18, 0.3, FZ * 2, -FX + i * (FX * 2 / 6), FRAM
 for (let r = 0; r < NROW; r++) box(FX * 2, 0.12, 0.08, 0, FRAME_Y + 0.06, ZFRONT - r * ROWGAP);
 
 /* ---------- Tubos colgantes ---------- */
-// Cada barra del logotipo = 3 tubos repartidos en 3 planos. Cada tubo se corta en tramos (solo donde el SVG
-// tiene naranja) y los tramos cuelgan de un cable fino: las letras quedan como vacío real.
+// Cada barra del logotipo = 5 varillas finas repartidas en 5 planos. Cada varilla se mide en su propia franja del SVG
+// (así aparecen las líneas delgadas que dibujan arcos y ventanas), se corta en tramos solo donde hay naranja
+// y los tramos cuelgan de un cable fino: las letras quedan como vacío real.
 // Posiciones y alturas se corrigen en perspectiva para que todo se alinee desde el punto de lectura.
 const rods = [];
 const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 let nSeg = 0, totalLen = 0;
-COLS.forEach((runs, i) => {
-  const perm = shuffle([0, 1, 2]);
-  SUBOFF.forEach((off, j) => {
+for (let i = 0; i < COLS.length / NSUB; i++) {
+  const perm = shuffle([0, 1, 2, 3, 4]);
+  for (let j = 0; j < NSUB; j++) {
+    const runs = COLS[i * NSUB + j];
+    if (!runs.length) continue;
     const z = ZFRONT - perm[j] * ROWGAP;
     const k = (EYE.z - z) / (EYE.z - ZFRONT);   // corrección anamórfica hacia el punto de lectura
-    const x = EYE.x + ((UX0 + PITCH * i + off - UCX) * S - EYE.x) * k;
+    const x = EYE.x + ((UX0 - BARW / 2 + PITCH * i + (j + 0.5) * BARW / NSUB - UCX) * S - EYE.x) * k;
     const yOf = u => EYE.y + ((HTOP - (u - U0) * S) - EYE.y) * k;
     const segs = runs.map(r => ({ a: FRAME_Y - yOf(r[0]), b: FRAME_Y - yOf(r[1]) }));
     segs.forEach(s => { totalLen += s.b - s.a; });
@@ -244,10 +246,10 @@ COLS.forEach((runs, i) => {
     rods.push({ x, z, r: R0 * k, segs, bot,
       w1: Math.sqrt(9.81 / (0.67 * bot)) * (0.92 + rand() * 0.16), p1: rand() * 6.283,
       w2: Math.sqrt(9.81 / (0.67 * bot)) * (0.85 + rand() * 0.3), p2: rand() * 6.283 });
-  });
-});
+  }
+}
 
-const cyl = new THREE.CylinderGeometry(1, 1, 1, 14, 1);
+const cyl = new THREE.CylinderGeometry(1, 1, 1, 12, 1);
 const thin = new THREE.CylinderGeometry(1, 1, 1, 5, 1);
 const orangeMat = new THREE.MeshPhysicalMaterial({ color: '#f28b30', roughness: 0.25, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.08, emissive: '#f28b30', emissiveIntensity: 0.05 });
 const capMat = new THREE.MeshStandardMaterial({ color: '#cfd3d6', metalness: 0.9, roughness: 0.3 });
@@ -442,16 +444,16 @@ document.getElementById('lights').addEventListener('click', e => {
   setLight(b.dataset.light);
 });
 const oMax = Math.max(...rods.map(r => r.x)), yTopMax = FRAME_Y + 0.45;
-const wallKgPerM = Math.PI * (0.0375 ** 2 - 0.0355 ** 2) * 2700;
+const wallKgPerM = Math.PI * (0.0195 ** 2 - 0.0180 ** 2) * 2700;
 const specs = [
   ['Campo de varillas', '15,0 × 9,0 m'],
   ['Altura total', `${yTopMax.toFixed(1).replace('.', ',')} m`],
   ['Paso libre bajo la obra', '≈ 5,8 m'],
-  ['Tubos', `${rods.length} · Ø 75 mm`],
+  ['Varillas', `${rods.length} · Ø 39 mm`],
   ['Planos de profundidad', `${NROW} · cada ${String(ROWGAP).replace('.', ',')} m`],
   ['Tramos colgados', `${nSeg}`],
-  ['Tubo total', `≈ ${Math.round(totalLen).toLocaleString('es-VE')} m`],
-  ['Peso tubos (pared 2 mm)', `≈ ${(totalLen * wallKgPerM / 1000).toFixed(1).replace('.', ',')} t`],
+  ['Varilla total', `≈ ${Math.round(totalLen).toLocaleString('es-VE')} m`],
+  ['Peso varillas (pared 1,5 mm)', `≈ ${(totalLen * wallKgPerM / 1000).toFixed(1).replace('.', ',')} t`],
   ['Punto de lectura', `${READ_DIST} m al frente`]
 ];
 document.getElementById('specs').innerHTML = specs.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('');
