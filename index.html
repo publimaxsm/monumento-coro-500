@@ -73,15 +73,14 @@ details[open] summary::after { content: "–"; }
   <header class="brand">
     <p class="eyebrow">Santa Ana de Coro · Quinto Centenario</p>
     <h1>Volumen virtual <b>CORO</b></h1>
-    <p class="lede">Estudio de monumento cinético: varillas colgantes que, desde sus dos puntos de lectura (al frente y detrás), componen el logotipo. Al caminar alrededor, la imagen se disuelve en vibración; con el viento, respira.</p>
+    <p class="lede">Estudio de monumento cinético: tubos colgantes que, desde el punto de lectura, componen el logotipo con sus letras en vacío real. Al caminar alrededor, la imagen se disuelve en vibración; con el viento, respira.</p>
   </header>
 
   <section class="panel" aria-label="Controles de la escena">
     <div class="row">
       <span class="label">Vista</span>
       <div class="seg" id="views">
-        <button type="button" data-view="lectura" aria-pressed="false">Lectura frontal</button>
-        <button type="button" data-view="trasera" aria-pressed="false">Lectura trasera</button>
+        <button type="button" data-view="lectura" aria-pressed="false">Punto de lectura</button>
         <button type="button" data-view="diagonal" aria-pressed="true">Diagonal</button>
         <button type="button" data-view="lateral" aria-pressed="false">Lateral</button>
         <button type="button" data-view="bajo" aria-pressed="false">Bajo la obra</button>
@@ -103,7 +102,7 @@ details[open] summary::after { content: "–"; }
     <details id="specsBox">
       <summary>Ficha técnica aproximada</summary>
       <dl class="specs" id="specs"></dl>
-      <p class="note">Cada tubo va pintado en dos medias caras: la delantera compone el logotipo visto desde el frente y la trasera lo compone visto desde atrás, así nunca se lee al revés. Una suspensión de dos hilos evita que los tubos giren sobre su eje: se mecen con el viento sin perder la orientación. Las zonas sin <i>naranja</i> van en aluminio claro, que se funde con el cielo.</p>
+      <p class="note">Las letras son vacío real: cada tubo se corta en tramos que cuelgan de un cable de acero inoxidable de 3 mm, casi invisible a distancia. Cada barra del logotipo se forma con 3 tubos <i>naranja</i> repartidos en 3 planos, un poco más gruesa que en el vector para ganar legibilidad. Todo se alinea desde el disco de bronce, a 35 m; desde atrás la imagen se ve en espejo.</p>
     </details>
   </section>
 </div>
@@ -127,13 +126,13 @@ const COLS = [[[167.5,832.5]],[[167.5,705.5],[730.5,872.5]],[[167.5,682.0],[714.
 /* ---------- Escala y concepto ---------- */
 const S = 0.01207;            // metros por unidad SVG → campo de 15 × 9 m
 const U0 = 167.5, HTOP = 14.8, UCX = 957.6, PITCH = 23.93, UX0 = 347.47;
-const SUBOFF = [-6.4, -3.2, 0, 3.2, 6.4];   // 5 varillas por barra
-const NROW = 5, ROWGAP = 0.2, ZFRONT = 0.4; // 5 planos de profundidad centrados en z = 0
+const BAR = 0.78 * PITCH;                    // barras algo más gruesas que en el SVG (67 %) para ganar legibilidad
+const SUBOFF = [-BAR / 3, 0, BAR / 3];       // 3 tubos por barra
+const NROW = 3, ROWGAP = 0.6, ZFRONT = 0.6;  // 3 planos de profundidad centrados en z = 0
 const READ_DIST = 35;
-const EYE = new THREE.Vector3(0, 1.7, READ_DIST);     // punto de lectura frontal
-const EYE_B = new THREE.Vector3(0, 1.7, -READ_DIST);  // punto de lectura trasero
+const EYE = new THREE.Vector3(0, 1.7, READ_DIST);  // punto de lectura
 const FRAME_Y = 16.15;
-const R0 = 1.6 * S;           // radio ≈ 19 mm (Ø ≈ 39 mm)
+const R0 = (BAR / 6) * S;     // radio ≈ 37 mm (Ø ≈ 75 mm)
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -213,8 +212,6 @@ const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.55, 0.55, 0.03, 48), br
 disc.position.set(EYE.x, 0.015, EYE.z); disc.receiveShadow = true; scene.add(disc);
 const ring = new THREE.Mesh(new THREE.TorusGeometry(0.85, 0.035, 8, 64), bronze);
 ring.rotation.x = -Math.PI / 2; ring.position.set(EYE.x, 0.02, EYE.z); scene.add(ring);
-const disc2 = disc.clone(); disc2.position.z = EYE_B.z; scene.add(disc2);
-const ring2 = ring.clone(); ring2.position.z = EYE_B.z; scene.add(ring2);
 
 /* ---------- Estructura de acero ---------- */
 const steel = new THREE.MeshStandardMaterial({ color: '#2a2b2e', metalness: 0.65, roughness: 0.45 });
@@ -226,57 +223,40 @@ box(FX * 2 + 0.34, 0.4, 0.3, 0, FRAME_Y + 0.25, FZ);
 for (let i = 0; i <= 6; i++) box(0.18, 0.3, FZ * 2, -FX + i * (FX * 2 / 6), FRAME_Y + 0.25, 0);
 for (let r = 0; r < NROW; r++) box(FX * 2, 0.12, 0.08, 0, FRAME_Y + 0.06, ZFRONT - r * ROWGAP);
 
-/* ---------- Varillas bifaciales ---------- */
-// Cada tubo va pintado en dos medias caras: la delantera compone el logo visto desde el frente
-// y la trasera lo compone visto desde atrás (columna espejada), así se lee bien por ambos lados.
+/* ---------- Tubos colgantes ---------- */
+// Cada barra del logotipo = 3 tubos repartidos en 3 planos. Cada tubo se corta en tramos (solo donde el SVG
+// tiene naranja) y los tramos cuelgan de un cable fino: las letras quedan como vacío real.
+// Posiciones y alturas se corrigen en perspectiva para que todo se alinee desde el punto de lectura.
 const rods = [];
 const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-const NCOL = COLS.length;
-let nFO = 0, nFV = 0, nBO = 0, nBV = 0, totalLen = 0;
-function faceSegs(runs, yOf, top, bot){
-  const out = []; let d = top;
-  for (const r of runs) {
-    const a = FRAME_Y - yOf(r[0]), b = FRAME_Y - yOf(r[1]);
-    if (a > d + 0.001) out.push({ a: d, b: a, o: false });
-    out.push({ a, b, o: true }); d = b;
-  }
-  if (bot > d + 0.001) out.push({ a: d, b: bot, o: false });
-  return out;
-}
-COLS.forEach((runsF, i) => {
-  const runsB = COLS[NCOL - 1 - i];
-  const perm = shuffle([0, 1, 2, 3, 4]);
+let nSeg = 0, totalLen = 0;
+COLS.forEach((runs, i) => {
+  const perm = shuffle([0, 1, 2]);
   SUBOFF.forEach((off, j) => {
     const z = ZFRONT - perm[j] * ROWGAP;
-    const kF = (EYE.z - z) / EYE.z, kB = (z - EYE_B.z) / -EYE_B.z;   // corrección de alturas para cada punto de lectura
-    const x = (UX0 + PITCH * i + off - UCX) * S;
-    const yF = u => EYE.y + ((HTOP - (u - U0) * S) - EYE.y) * kF;
-    const yB = u => EYE.y + ((HTOP - (u - U0) * S) - EYE.y) * kB;
-    const top = Math.min(FRAME_Y - yF(runsF[0][0]), FRAME_Y - yB(runsB[0][0]));
-    const bot = Math.max(FRAME_Y - yF(runsF[runsF.length - 1][1]), FRAME_Y - yB(runsB[runsB.length - 1][1]));
-    const front = faceSegs(runsF, yF, top, bot), back = faceSegs(runsB, yB, top, bot);
-    front.forEach(s => { if (s.o) nFO++; else nFV++; });
-    back.forEach(s => { if (s.o) nBO++; else nBV++; });
-    totalLen += bot - top;
-    rods.push({ x, z, r: R0, front, back, top, len: bot - top,
+    const k = (EYE.z - z) / (EYE.z - ZFRONT);   // corrección anamórfica hacia el punto de lectura
+    const x = EYE.x + ((UX0 + PITCH * i + off - UCX) * S - EYE.x) * k;
+    const yOf = u => EYE.y + ((HTOP - (u - U0) * S) - EYE.y) * k;
+    const segs = runs.map(r => ({ a: FRAME_Y - yOf(r[0]), b: FRAME_Y - yOf(r[1]) }));
+    segs.forEach(s => { totalLen += s.b - s.a; });
+    nSeg += segs.length;
+    const bot = segs[segs.length - 1].b;
+    rods.push({ x, z, r: R0 * k, segs, bot,
       w1: Math.sqrt(9.81 / (0.67 * bot)) * (0.92 + rand() * 0.16), p1: rand() * 6.283,
       w2: Math.sqrt(9.81 / (0.67 * bot)) * (0.85 + rand() * 0.3), p2: rand() * 6.283 });
   });
 });
 
-const halfF = new THREE.CylinderGeometry(1, 1, 1, 10, 1, false, -Math.PI / 2, Math.PI);
-const halfB = new THREE.CylinderGeometry(1, 1, 1, 10, 1, false, Math.PI / 2, Math.PI);
-const cyl = new THREE.CylinderGeometry(1, 1, 1, 6, 1);
-const orangeMat = new THREE.MeshPhysicalMaterial({ color: '#f28b30', roughness: 0.22, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.08, emissive: '#f28b30', emissiveIntensity: 0.05 });
-const voidMat = new THREE.MeshStandardMaterial({ color: '#d9dde0', metalness: 0.55, roughness: 0.38 });
-const threadMat = new THREE.MeshBasicMaterial({ color: '#9aa0a6', transparent: true, opacity: 0.55 });
-const meshFO = new THREE.InstancedMesh(halfF, orangeMat, nFO);
-const meshFV = new THREE.InstancedMesh(halfF, voidMat, Math.max(1, nFV));
-const meshBO = new THREE.InstancedMesh(halfB, orangeMat, nBO);
-const meshBV = new THREE.InstancedMesh(halfB, voidMat, Math.max(1, nBV));
-const threadMesh = new THREE.InstancedMesh(cyl, threadMat, rods.length);
-const rodMeshes = [meshFO, meshFV, meshBO, meshBV, threadMesh];
-for (const m of rodMeshes) { m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); m.frustumCulled = false; m.castShadow = m !== threadMesh; m.receiveShadow = true; scene.add(m); }
+const cyl = new THREE.CylinderGeometry(1, 1, 1, 14, 1);
+const thin = new THREE.CylinderGeometry(1, 1, 1, 5, 1);
+const orangeMat = new THREE.MeshPhysicalMaterial({ color: '#f28b30', roughness: 0.25, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.08, emissive: '#f28b30', emissiveIntensity: 0.05 });
+const capMat = new THREE.MeshStandardMaterial({ color: '#cfd3d6', metalness: 0.9, roughness: 0.3 });
+const cableMat = new THREE.MeshBasicMaterial({ color: '#7d848b', transparent: true, opacity: 0.6 });
+const segMesh = new THREE.InstancedMesh(cyl, orangeMat, nSeg);
+const capMesh = new THREE.InstancedMesh(cyl, capMat, nSeg * 2);
+const cableMesh = new THREE.InstancedMesh(thin, cableMat, rods.length);
+const rodMeshes = [segMesh, capMesh, cableMesh];
+for (const m of rodMeshes) { m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); m.frustumCulled = false; m.castShadow = m !== cableMesh; m.receiveShadow = true; scene.add(m); }
 
 const _q = new THREE.Quaternion(), _e = new THREE.Euler(), _p = new THREE.Vector3(), _s = new THREE.Vector3(), _m = new THREE.Matrix4(), _v = new THREE.Vector3();
 function place(mesh, idx, rod, q, d0, d1, radius){
@@ -287,16 +267,19 @@ function place(mesh, idx, rod, q, d0, d1, radius){
 }
 let wind = 0.3;
 function updateRods(t){
-  let a = 0, b = 0, c = 0, d = 0;
+  let a = 0, c = 0;
   for (let n = 0; n < rods.length; n++) {
     const rod = rods[n];
     const gust = 0.6 + 0.4 * Math.sin(t * 0.55 - rod.x * 0.32 + rod.z * 0.8) + 0.22 * Math.sin(t * 1.7 + rod.x * 0.9);
     const ax = wind * (0.011 + 0.016 * gust * Math.sin(t * rod.w1 + rod.p1));
     const az = wind * 0.008 * gust * Math.sin(t * rod.w2 + rod.p2);
-    _e.set(ax, 0, az); _q.setFromEuler(_e);   // se mece sin girar sobre su eje (suspensión de dos hilos)
-    place(threadMesh, n, rod, _q, 0, rod.top, 0.0035);
-    for (const s of rod.front) { if (s.o) place(meshFO, a++, rod, _q, s.a, s.b, rod.r); else place(meshFV, b++, rod, _q, s.a, s.b, rod.r); }
-    for (const s of rod.back) { if (s.o) place(meshBO, c++, rod, _q, s.a, s.b, rod.r); else place(meshBV, d++, rod, _q, s.a, s.b, rod.r); }
+    _e.set(ax, 0, az); _q.setFromEuler(_e);
+    place(cableMesh, n, rod, _q, 0, rod.bot, 0.0018);
+    for (const s of rod.segs) {
+      place(segMesh, a++, rod, _q, s.a, s.b, rod.r);
+      place(capMesh, c++, rod, _q, s.a, s.a + 0.015, rod.r * 1.04);
+      place(capMesh, c++, rod, _q, s.b - 0.015, s.b, rod.r * 1.04);
+    }
   }
   for (const m of rodMeshes) m.instanceMatrix.needsUpdate = true;
 }
@@ -393,10 +376,10 @@ sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.02;
 sun.target.position.set(0, 4, 4); scene.add(sun, sun.target);
 const hemi = new THREE.HemisphereLight('#cfe6ff', '#b89a74', 0.6); scene.add(hemi);
 const spots = [];
-for (let i = 0; i < 12; i++) {
+for (let i = 0; i < 6; i++) {
   const s = new THREE.SpotLight('#ffd6a0', 0, 30, 0.42, 0.7, 1.4);
-  const x = -7.5 + (i % 6) * 3, side = i < 6 ? 1 : -1;
-  s.position.set(x, 0.4, side * 3.8); s.target.position.set(x, 12, side * 0.2);
+  const x = -7.5 + i * 3;
+  s.position.set(x, 0.4, 4.2); s.target.position.set(x, 12, 0);
   scene.add(s, s.target); spots.push(s);
 }
 const sunVec = new THREE.Vector3();
@@ -431,7 +414,6 @@ scene.traverse(o => { const m = o.material; if (m && m.isMeshStandardMaterial &&
 const LOGO_C = new THREE.Vector3(0, HTOP - 4.4, 0);
 const PRESETS = {
   lectura:  { pos: EYE.clone(), target: LOGO_C.clone(), fov: 30 },
-  trasera:  { pos: EYE_B.clone(), target: LOGO_C.clone(), fov: 30 },
   diagonal: { pos: new THREE.Vector3(22, 6.5, 31), target: new THREE.Vector3(0, 8.8, 0), fov: 45 },
   lateral:  { pos: new THREE.Vector3(36, 8, 0.5), target: new THREE.Vector3(0, 9.8, 0), fov: 42 },
   bajo:     { pos: new THREE.Vector3(2.6, 2.0, 4.4), target: new THREE.Vector3(-0.6, 12.5, -0.4), fov: 72 },
@@ -460,17 +442,17 @@ document.getElementById('lights').addEventListener('click', e => {
   setLight(b.dataset.light);
 });
 const oMax = Math.max(...rods.map(r => r.x)), yTopMax = FRAME_Y + 0.45;
-const wallKgPerM = Math.PI * (0.0195 ** 2 - 0.0175 ** 2) * 2700;
+const wallKgPerM = Math.PI * (0.0375 ** 2 - 0.0355 ** 2) * 2700;
 const specs = [
   ['Campo de varillas', '15,0 × 9,0 m'],
   ['Altura total', `${yTopMax.toFixed(1).replace('.', ',')} m`],
-  ['Paso libre bajo la obra', '≈ 5,6 m'],
-  ['Tubos', `${rods.length} · aluminio Ø 39 mm`],
+  ['Paso libre bajo la obra', '≈ 5,8 m'],
+  ['Tubos', `${rods.length} · Ø 75 mm`],
   ['Planos de profundidad', `${NROW} · cada ${String(ROWGAP).replace('.', ',')} m`],
-  ['Tramos pintados frente / atrás', `${nFO} / ${nBO}`],
+  ['Tramos colgados', `${nSeg}`],
   ['Tubo total', `≈ ${Math.round(totalLen).toLocaleString('es-VE')} m`],
   ['Peso tubos (pared 2 mm)', `≈ ${(totalLen * wallKgPerM / 1000).toFixed(1).replace('.', ',')} t`],
-  ['Puntos de lectura', `${READ_DIST} m al frente y atrás`]
+  ['Punto de lectura', `${READ_DIST} m al frente`]
 ];
 document.getElementById('specs').innerHTML = specs.map(([a, b]) => `<dt>${a}</dt><dd>${b}</dd>`).join('');
 if (innerWidth > 720) document.getElementById('specsBox').open = false;
